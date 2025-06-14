@@ -1,0 +1,191 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="bg-white shadow-lg rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-2xl font-bold text-gray-900">{{ isEditMode ? 'Edit' : 'Add New' }} Employee</h2>
+    </div>
+
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="p-6">
+      <!-- Employee Information -->
+      <div class="mb-8">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Employee Information</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Employee ID <span class="text-red-500">*</span>
+            </label>
+            <input type="text"
+                   formControlName="employeeId"
+                   [readonly]="isEditMode"
+                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                   [ngClass]="{'bg-gray-100': isEditMode}"
+                   placeholder="4-digit ID (e.g., 1001)"
+                   maxlength="4">
+            <p class="mt-1 text-sm text-red-600" *ngIf="employeeForm.get('employeeId')?.touched && employeeForm.get('employeeId')?.errors?.['required']">
+              Employee ID is required
+            </p>
+            <p class="mt-1 text-sm text-red-600" *ngIf="employeeForm.get('employeeId')?.touched && employeeForm.get('employeeId')?.errors?.['pattern']">
+              Employee ID must be exactly 4 digits
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Grade <span class="text-red-500">*</span>
+            </label>
+            <select formControlName="grade"
+                    (change)="checkGradeAvailability()"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+              <option value="">Select Grade</option>
+              <option *ngFor="let grade of grades" [value]="grade">
+                {{ grade | gradeDisplay }}
+              </option>
+            </select>
+            <p class="mt-1 text-sm text-red-600" *ngIf="employeeForm.get('grade')?.touched && employeeForm.get('grade')?.errors?.['required']">
+              Grade is required
+            </p>
+            <p class="mt-1 text-sm text-yellow-600" *ngIf="gradeWarning">
+              {{ gradeWarning }}
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Name <span class="text-red-500">*</span>
+          </label>
+          <input type="text"
+                 formControlName="name"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="Full Name">
+          <p class="mt-1 text-sm text-red-600" *ngIf="employeeForm.get('name')?.touched && employeeForm.get('name')?.errors?.['required']">
+            Name is required
+          </p>
+        </div>
+
+        <div class="mt-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Address <span class="text-red-500">*</span>
+          </label>
+          <textarea formControlName="address"
+                    rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Complete Address"></textarea>
+          <p class="mt-1 text-sm text-red-600" *ngIf="employeeForm.get('address')?.touched && employeeForm.get('address')?.errors?.['required']">
+            Address is required
+          </p>
+        </div>
+
+        <div class="mt-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Mobile Number <span class="text-red-500">*</span>
+          </label>
+          <input type="text"
+                 formControlName="mobileNumber"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="10-15 digits">
+          <p class="mt-1 text-sm text-red-600" *ngIf="employeeForm.get('mobileNumber')?.touched && employeeForm.get('mobileNumber')?.errors?.['required']">
+            Mobile number is required
+          </p>
+          <p class="mt-1 text-sm text-red-600" *ngIf="employeeForm.get('mobileNumber')?.touched && employeeForm.get('mobileNumber')?.errors?.['pattern']">
+            Mobile number must be 10-15 digits
+          </p>
+        </div>
+      </div>
+
+      <!-- Bank Account Information -->
+      <div class="mb-8" formGroupName="bankAccount">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Bank Account Information</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Account Type <span class="text-red-500">*</span>
+            </label>
+            <select formControlName="accountType"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+              <option value="">Select Type</option>
+              <option *ngFor="let type of accountTypes" [value]="type">
+                {{ type }}
+              </option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Account Number <span class="text-red-500">*</span>
+            </label>
+            <input type="text"
+                   formControlName="accountNumber"
+                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                   placeholder="Account Number">
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Account Name <span class="text-red-500">*</span>
+          </label>
+          <input type="text"
+                 formControlName="accountName"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="Account Holder Name">
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Bank Name <span class="text-red-500">*</span>
+            </label>
+            <input type="text"
+                   formControlName="bankName"
+                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                   placeholder="Bank Name">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Branch Name <span class="text-red-500">*</span>
+            </label>
+            <input type="text"
+                   formControlName="branchName"
+                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                   placeholder="Branch Name">
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Current Balance <span class="text-red-500">*</span>
+          </label>
+          <input type="number"
+                 formControlName="currentBalance"
+                 step="0.01"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="0.00">
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+        <button type="button"
+                (click)="cancel()"
+                class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+          Cancel
+        </button>
+        <button type="submit"
+                [disabled]="employeeForm.invalid || isSubmitting"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          <span *ngIf="!isSubmitting">{{ isEditMode ? 'Update' : 'Create' }} Employee</span>
+          <span *ngIf="isSubmitting" class="flex items-center">
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Processing...
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

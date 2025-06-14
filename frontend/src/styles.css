@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+/* Custom utility classes */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(156 163 175) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgb(156 163 175);
+    border-radius: 4px;
+  }
+}
+
+/* Toast customization for ngx-toastr - Remove !important from @apply */
+.toast-container .ngx-toastr {
+  @apply shadow-lg rounded-lg;
+}
+
+.toast-success {
+  @apply bg-green-500 text-white;
+}
+
+.toast-error {
+  @apply bg-red-500 text-white;
+}
+
+.toast-warning {
+  @apply bg-yellow-500 text-white;
+}
+
+.toast-info {
+  @apply bg-blue-500 text-white;
+}

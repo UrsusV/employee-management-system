@@ -1,0 +1,98 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <h1 class="text-3xl font-bold text-gray-900 mb-8">Salary Calculator</h1>
+
+  <div class="bg-white shadow-lg rounded-lg mb-8">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-xl font-semibold text-gray-900">Employee Salary Details</h2>
+    </div>
+    <div class="p-6">
+      <button (click)="calculateAllSalaries()"
+              [disabled]="loading"
+              class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+        </svg>
+        {{ loading ? 'Calculating...' : 'Calculate All Salaries' }}
+      </button>
+
+      <div class="mt-6 overflow-x-auto" *ngIf="salaryCalculations.length > 0">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee ID</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Basic Salary</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">House Rent (20%)</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Medical (15%)</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Salary</th>
+          </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let calc of salaryCalculations" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ calc.employeeId }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ calc.employeeName }}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                  {{ calc.grade | gradeDisplay }}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ calc.basicSalary | currencyFormat }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ calc.houseRent | currencyFormat }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ calc.medicalAllowance | currencyFormat }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ calc.totalSalary | currencyFormat }}</td>
+          </tr>
+          </tbody>
+          <tfoot>
+          <tr class="bg-blue-50">
+            <td colspan="6" class="px-6 py-4 text-right text-sm font-semibold text-gray-900">Total Monthly Salary:</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{{ getTotalSalary() | currencyFormat }}</td>
+          </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="mt-6 flex items-center p-4 bg-blue-50 rounded-lg" *ngIf="salaryCalculations.length === 0 && !loading">
+        <svg class="w-5 h-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="text-blue-700">Click "Calculate All Salaries" to view salary details for all employees.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grade-wise Salary Structure -->
+  <div class="bg-white shadow-lg rounded-lg">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 class="text-xl font-semibold text-gray-900">Grade-wise Salary Structure</h2>
+    </div>
+    <div class="p-6">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Basic Salary</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">House Rent</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Medical Allowance</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+          </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let structure of salaryStructure" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                  {{ structure.grade | gradeDisplay }}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ structure.basicSalary | currencyFormat }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ structure.houseRent | currencyFormat }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ structure.medicalAllowance | currencyFormat }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ structure.total | currencyFormat }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

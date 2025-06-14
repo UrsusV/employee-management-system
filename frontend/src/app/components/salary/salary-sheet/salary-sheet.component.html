@@ -1,0 +1,47 @@
+<div class="salary-sheet" *ngIf="salarySheet">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <div>
+      <p class="text-sm text-gray-600">Process Date</p>
+      <p class="font-semibold">{{ salarySheet.processDate }}</p>
+    </div>
+    <div class="text-right">
+      <p class="text-sm text-gray-600">Company Balance Before</p>
+      <p class="font-semibold">{{ salarySheet.companyBalanceBefore | currencyFormat }}</p>
+      <p class="text-sm text-gray-600 mt-2">Company Balance After</p>
+      <p class="font-semibold">{{ salarySheet.companyBalanceAfter | currencyFormat }}</p>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee ID</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Basic Salary</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">House Rent</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Medical</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Salary</th>
+      </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+      <tr *ngFor="let detail of salarySheet.salaryDetails">
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ detail.employeeId }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ detail.employeeName }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ detail.grade | gradeDisplay }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ detail.basicSalary | currencyFormat }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ detail.houseRent | currencyFormat }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ detail.medicalAllowance | currencyFormat }}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ detail.totalSalary | currencyFormat }}</td>
+      </tr>
+      </tbody>
+      <tfoot>
+      <tr class="bg-blue-50">
+        <td colspan="6" class="px-6 py-4 text-right text-sm font-semibold text-gray-900">Total Salary Paid:</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{{ salarySheet.totalSalaryPaid | currencyFormat }}</td>
+      </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
