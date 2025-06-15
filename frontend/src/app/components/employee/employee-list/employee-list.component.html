@@ -81,5 +81,5 @@
   [title]="'Delete Employee'"
   [message]="'Are you sure you want to delete ' + selectedEmployee?.name + '?'"
   (confirm)="confirmDelete()"
-  (cancel)="showDeleteConfirm = false">
+  (cancel)="cancelDelete()">
 </app-confirm-dialog>
