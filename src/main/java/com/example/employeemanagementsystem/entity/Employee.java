@@ -30,7 +30,7 @@ public class Employee {
     @Column(name = "mobile_number", nullable = false, length = 20)
     private String mobileNumber;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "bank_account_id", unique = true)
     private BankAccount bankAccount;
 

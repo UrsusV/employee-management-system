@@ -82,11 +82,27 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional
     public void deleteEmployee(String employeeId) {
-        if (!employeeRepository.existsById(employeeId)) {
-            throw new ResourceNotFoundException("Employee not found: " + employeeId);
+        try {
+            // Check if employee exists
+            Employee employee = employeeRepository.findById(employeeId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Employee not found: " + employeeId));
+
+            // Log for debugging
+            System.out.println("Deleting employee: " + employeeId);
+            System.out.println("Employee has bank account: " + (employee.getBankAccount() != null));
+
+            // Delete the employee (bank account will be cascade deleted)
+            employeeRepository.delete(employee);
+            employeeRepository.flush(); // Force immediate execution
+
+            System.out.println("Employee deleted successfully: " + employeeId);
+        } catch (Exception e) {
+            System.err.println("Error deleting employee: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to delete employee: " + e.getMessage(), e);
         }
-        employeeRepository.deleteById(employeeId);
     }
 
     @Override

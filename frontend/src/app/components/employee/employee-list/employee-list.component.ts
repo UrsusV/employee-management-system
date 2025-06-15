@@ -54,6 +54,7 @@ export class EmployeeListComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
+        console.error('Error loading employees:', error);
         this.notificationService.error('Failed to load employees');
         this.loading = false;
       }
@@ -73,10 +74,22 @@ export class EmployeeListComponent implements OnInit {
   }
 
   deleteEmployee(employee: Employee): void {
-    this.selectedEmployee = employee;
-    this.showDeleteConfirm = true;
+    // Temporary fix: Use native confirm dialog
+    if (confirm(`Are you sure you want to delete ${employee.name}?`)) {
+      this.employeeService.deleteEmployee(employee.employeeId).subscribe({
+        next: () => {
+          this.notificationService.success('Employee deleted successfully');
+          this.loadEmployees();
+        },
+        error: (error) => {
+          console.error('Error deleting employee:', error);
+          this.notificationService.error(error.error?.message || 'Failed to delete employee');
+        }
+      });
+    }
   }
 
+  // Keep these for when we fix the modal
   confirmDelete(): void {
     if (this.selectedEmployee) {
       this.employeeService.deleteEmployee(this.selectedEmployee.employeeId).subscribe({
@@ -84,12 +97,20 @@ export class EmployeeListComponent implements OnInit {
           this.notificationService.success('Employee deleted successfully');
           this.loadEmployees();
           this.showDeleteConfirm = false;
+          this.selectedEmployee = null;
         },
         error: (error) => {
-          this.notificationService.error('Failed to delete employee');
+          console.error('Error deleting employee:', error);
+          this.notificationService.error(error.error?.message || 'Failed to delete employee');
           this.showDeleteConfirm = false;
+          this.selectedEmployee = null;
         }
       });
     }
+  }
+
+  cancelDelete(): void {
+    this.showDeleteConfirm = false;
+    this.selectedEmployee = null;
   }
 }
